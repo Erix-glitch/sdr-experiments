@@ -1,7 +1,6 @@
 from rtlsdr import RtlSdr
 import numpy as np
 from scipy.signal import find_peaks, decimate
-
 # --- SDR CONFIGURATION ---
 sdr = RtlSdr()
 sdr.sample_rate = 2.4e6

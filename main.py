@@ -5,10 +5,10 @@ from scipy.signal import find_peaks, decimate
 sdr = RtlSdr()
 sdr.sample_rate = 2.4e6
 sdr.center_freq = 13.56e6
-sdr.gain = 'auto'
+sdr.gain = 35
 
 # --- DETECTION PARAMETERS ---
-threshold = 0.3 
+threshold = 1
 decim_factor = 50
 min_burst_gap = 0.01
 

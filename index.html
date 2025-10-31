@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="importmap">
       {
         "imports": {
@@ -9,55 +11,115 @@
       }
     </script>
     <script src="index.js" type="module"></script>
+    <link rel="stylesheet" href="main.css" />
   </head>
-  <body>
-    <h1>Low-level Web RTL-SDR demo</h1>
-    <p>Measures the average power of the received signals.</p>
+  <body class="bg-slate-50 font-sans text-slate-900 dark:bg-[#121212] dark:text-[#e0e0e0]">
+    <main class="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
+      <header class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+          <h1 class="text-2xl font-semibold text-slate-900 dark:text-[#e0e0e0]">
+            Low-level Web RTL-SDR demo
+          </h1>
+          <p class="max-w-xl text-sm text-slate-600 dark:text-[#a0a0a0]">
+            Measures the average power of the received signals.
+          </p>
+        </div>
+        <button
+          id="themeToggle"
+          type="button"
+          aria-pressed="false"
+          class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-indigo-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-[#333333] dark:text-[#e0e0e0] dark:hover:border-[#bb86fc] dark:hover:text-[#bb86fc]"
+        >
+          Dark mode
+        </button>
+      </header>
 
-    <div>
-      <button id="startButton">Start</button>
-    </div>
+      <section class="space-y-6">
+        <button
+          id="startButton"
+          class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:bg-indigo-300 dark:bg-[#bb86fc] dark:hover:bg-[#a673f2] dark:focus:ring-[#bb86fc]/40 dark:disabled:bg-[#3a2966]"
+        >
+          Start
+        </button>
 
-    <div>
-      <label for="frequencyInput">Center frequency: </label
-      ><input id="frequencyInput" type="number" value="88500000" />
-    </div>
+        <div class="space-y-5">
+          <div class="space-y-1">
+            <label for="frequencyInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0]">
+              Center frequency
+            </label>
+            <input
+              id="frequencyInput"
+              type="number"
+              value="88500000"
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
+            />
+          </div>
 
-    <div>
-      <label for="gainInput">Gain: </label
-      ><input id="gainInput" type="range" min="0" max="50" disabled />
-      <input id="autoGainBox" type="checkbox" checked /><label for="autoGainBox"
-        >Auto gain</label
-      >
-    </div>
-    <div>
-      <label for="bandwidthInput">Bandwidth: </label
-      ><input
-        id="bandwidthInput"
-        type="number"
-        min="1"
-        max="1024000"
-        step="1000"
-        value="200000"
-      />
-      Hz
-    </div>
-    <div>
-      <label for="numSamplesInput"> Number of samples to read: </label
-      ><input
-        id="numSamplesInput"
-        type="number"
-        value="10"
-      />
-    </div>
-    
-    <fieldset>
-      <legend>Log</legend>
-      <textarea
-        id="logArea"
-        readonly
-        style="width: 100%; height: 50em"
-      ></textarea>
-    </fieldset>
+          <div class="space-y-3">
+            <label for="gainInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0]">
+              Gain
+            </label>
+            <input
+              id="gainInput"
+              type="range"
+              min="0"
+              max="50"
+              disabled
+              class="w-full accent-indigo-600 disabled:opacity-50 dark:accent-[#bb86fc]"
+            />
+            <label for="autoGainBox" class="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-[#a0a0a0]">
+              <input
+                id="autoGainBox"
+                type="checkbox"
+                checked
+                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-[#444444] dark:bg-[#1e1e1e] dark:text-[#bb86fc] dark:focus:ring-[#bb86fc]"
+              />
+              Auto gain
+            </label>
+          </div>
+
+          <div class="space-y-1">
+            <label for="bandwidthInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0]">
+              Bandwidth
+            </label>
+            <div class="flex items-center gap-2">
+              <input
+                id="bandwidthInput"
+                type="number"
+                min="1"
+                max="1024000"
+                step="1000"
+                value="200000"
+                class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:w-48 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
+              />
+              <span class="text-sm text-slate-500 dark:text-[#a0a0a0]">Hz</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label for="numSamplesInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0]">
+              Number of samples to read
+            </label>
+            <input
+              id="numSamplesInput"
+              type="number"
+              value="10"
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:w-48 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
+            />
+          </div>
+        </div>
+
+        <fieldset class="space-y-3 rounded-md border border-slate-200 bg-white/80 p-4 dark:border-[#2a2a2a] dark:bg-[#1e1e1e]">
+          <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-[#a0a0a0]">
+            Log
+          </legend>
+          <textarea
+            id="logArea"
+            readonly
+            class="min-h-[16rem] w-full resize-y rounded border border-slate-300 bg-white p-3 font-mono text-sm leading-relaxed text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
+          ></textarea>
+        </fieldset>
+      </section>
+    </main>
   </body>
 </html>

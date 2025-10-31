@@ -1,4 +1,0 @@
-pyrtlsdr[lib]
-scipy
-setuptools
-websockets

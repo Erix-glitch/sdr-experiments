@@ -244,12 +244,19 @@ function preparePage() {
     "bandwidthInput",
     "numSamplesInput",
     "logArea",
-    "thresholdInput"
+    "thresholdInput",
+    "mainSection"
   ]) {
     elements[id] = document.getElementById(id);
   }
   if (elements.bandwidthInput && !elements.bandwidthInput.value) {
     elements.bandwidthInput.value = "200000";
+  }
+
+  if ("usb" in navigator === false) {
+    log("WebUSB API not supported in this browser.");
+    mainSection.classList.add("hidden")
+    document.getElementById("usbWarning").style.display = "block";
   }
 }
 

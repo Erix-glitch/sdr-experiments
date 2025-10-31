@@ -62,7 +62,11 @@ async function onStartButtonClick() {
     for (let i = 0; i < numSamples; i++) {
       let samples = await device.readSamples(65536);
       let dB = measurePower(samples, bandwidth);
-      log(`${samples.frequency} Hz — ${dB} dB`);
+
+      const threshold = parseFloat(elements.thresholdInput.value);
+      const overThreshold = dB >= threshold;
+
+      log(`${samples.frequency} Hz — ${dB} dB`, overThreshold);
     }
     // Close the device when done. You can reopen it with provider.get()
     await device.close();
@@ -170,9 +174,28 @@ function createLowPassKernel(bandwidthHz) {
   return taps;
 }
 
-function log(msg) {
-  elements.logArea.value =
-    `${new Date().toISOString()} — ${msg}\n` + elements.logArea.value;
+function log(msg, highlight = false) {
+  const container = elements.logArea;
+  if (!container) {
+    return;
+  }
+  const entry = document.createElement("div");
+  entry.className =
+    "rounded border border-slate-200 bg-white/80 p-2 text-slate-800 shadow-sm dark:border-[#333333] dark:bg-[#232323] dark:text-[#e0e0e0]";
+  if (highlight) {
+    entry.classList.add(
+      "bg-green-100",
+      "border-green-300",
+      "dark:bg-green-900/30",
+      "dark:border-green-600"
+    );
+  }
+  entry.textContent = `${new Date().toISOString()} — ${msg}`;
+  container.prepend(entry);
+  const maxEntries = 50;
+  while (container.childElementCount > maxEntries) {
+    container.removeChild(container.lastElementChild);
+  }
 }
 
 function onFrequencyInputChange() {
@@ -221,6 +244,7 @@ function preparePage() {
     "bandwidthInput",
     "numSamplesInput",
     "logArea",
+    "thresholdInput"
   ]) {
     elements[id] = document.getElementById(id);
   }

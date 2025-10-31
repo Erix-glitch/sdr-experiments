@@ -6,11 +6,9 @@ var device;
 
 const SAMPLE_RATE = 1024000;
 const filterCache = new Map();
-const THEME_STORAGE_KEY = "rtl-sdr-theme";
 
 async function main() {
   preparePage();
-  initTheme();
   elements.startButton.addEventListener("click", onStartButtonClick);
   elements.frequencyInput.addEventListener("change", onFrequencyInputChange);
   elements.autoGainBox.addEventListener("change", onAutoGainBoxChange);
@@ -177,68 +175,6 @@ function log(msg) {
     `${new Date().toISOString()} — ${msg}\n` + elements.logArea.value;
 }
 
-function initTheme() {
-  let stored = getStoredTheme();
-  if (stored !== "dark" && stored !== "light") {
-    stored = null;
-  }
-  const prefersDark = window.matchMedia
-    ? window.matchMedia("(prefers-color-scheme: dark)").matches
-    : false;
-  const startingTheme = stored ?? (prefersDark ? "dark" : "light");
-  applyTheme(startingTheme);
-  const mediaQuery = window.matchMedia
-    ? window.matchMedia("(prefers-color-scheme: dark)")
-    : null;
-  const onMediaChange = (event) => {
-    if (!getStoredTheme()) {
-      applyTheme(event.matches ? "dark" : "light");
-    }
-  };
-  if (mediaQuery) {
-    if (typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", onMediaChange);
-    } else if (typeof mediaQuery.addListener === "function") {
-      mediaQuery.addListener(onMediaChange);
-    }
-  }
-  if (elements.themeToggle) {
-    elements.themeToggle.addEventListener("click", onThemeToggleClick);
-  }
-}
-
-function applyTheme(mode) {
-  const isDark = mode === "dark";
-  document.documentElement.classList.toggle("dark", isDark);
-  if (elements.themeToggle) {
-    elements.themeToggle.setAttribute("aria-pressed", String(isDark));
-    elements.themeToggle.textContent = isDark ? "Light mode" : "Dark mode";
-  }
-}
-
-function onThemeToggleClick() {
-  const isDark = document.documentElement.classList.contains("dark");
-  const nextTheme = isDark ? "light" : "dark";
-  applyTheme(nextTheme);
-  setStoredTheme(nextTheme);
-}
-
-function getStoredTheme() {
-  try {
-    return localStorage.getItem(THEME_STORAGE_KEY);
-  } catch (e) {
-    return null;
-  }
-}
-
-function setStoredTheme(value) {
-  try {
-    localStorage.setItem(THEME_STORAGE_KEY, value);
-  } catch (e) {
-    // Ignore storage errors (e.g. in private mode)
-  }
-}
-
 function onFrequencyInputChange() {
   setNumberInput(
     elements.frequencyInput,
@@ -285,7 +221,6 @@ function preparePage() {
     "bandwidthInput",
     "numSamplesInput",
     "logArea",
-    "themeToggle",
   ]) {
     elements[id] = document.getElementById(id);
   }

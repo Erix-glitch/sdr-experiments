@@ -1,8 +1,6 @@
 {
   "dependencies": {
-    "@jtarrio/webrtlsdr": "^2.0.3",
-    "@tailwindcss/cli": "^4.1.16",
-    "tailwindcss": "^4.1.16"
+    "@jtarrio/webrtlsdr": "^2.0.3"
   },
   "devDependencies": {
     "vite": "^7.1.12"

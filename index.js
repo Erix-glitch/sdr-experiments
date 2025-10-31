@@ -22,8 +22,14 @@ async function onStartButtonClick() {
   let gain = elements.autoGainBox.checked
     ? null
     : Number(elements.gainInput.value);
+  let numSamples = elements.numSamplesInput.value;
   if (isNaN(gain)) {
     log(`Invalid gain: ${elements.gainInput.value}`);
+    return;
+  }
+
+  if (numSamples <= 0) {
+    log(`Number of samples must not be equal to or less than 0: ${numSamples}`);
     return;
   }
 
@@ -38,8 +44,8 @@ async function onStartButtonClick() {
     await device.setGain(gain);
     // Reset the buffer and then start reading samples
     await device.resetBuffer();
-    for (let i = 0; i < 10; i++) {
-      let samples = await device.readSamples(65536);
+    for (let i = 0; i < 100; i++) {
+      let samples = await device.readSamples(numSamples);
       let dB = measurePower(samples);
       log(`${samples.frequency} Hz — ${dB} dB`);
     }
@@ -112,6 +118,7 @@ function preparePage() {
     "frequencyInput",
     "autoGainBox",
     "gainInput",
+    "numSamplesInput",
     "logArea",
   ]) {
     elements[id] = document.getElementById(id);

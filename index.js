@@ -44,8 +44,8 @@ async function onStartButtonClick() {
     await device.setGain(gain);
     // Reset the buffer and then start reading samples
     await device.resetBuffer();
-    for (let i = 0; i < 100; i++) {
-      let samples = await device.readSamples(numSamples);
+    for (let i = 0; i < numSamples; i++) {
+      let samples = await device.readSamples(65536);
       let dB = measurePower(samples);
       log(`${samples.frequency} Hz — ${dB} dB`);
     }

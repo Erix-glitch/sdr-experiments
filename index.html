@@ -20,7 +20,7 @@
           RTL-SDR Signal Power Meter
         </h1>
         <p class="max-w-xl text-sm text-slate-600 dark:text-[#a0a0a0]">
-          Measures the average power of the received signals. Stepping stone to the phone detector.
+          Measure either the peak or average power of the received signal. Stepping stone to the phone detector.
         </p>
       </header>
 
@@ -91,6 +91,20 @@
               <span class="text-sm text-slate-500 dark:text-[#a0a0a0]">-60 dB</span>
               <span class="text-sm text-slate-500 dark:text-[#a0a0a0]">0 dB</span>
             </div>
+          </div>
+
+          <div class="space-y-1">
+            <label for="measurementModeInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0]">
+              Measurement mode
+            </label>
+            <br />
+            <select
+              id="measurementModeInput"
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:w-48 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
+            >
+              <option value="peak" selected>Peak power (dB)</option>
+              <option value="average">Average power (dB)</option>
+            </select>
           </div>
 
 

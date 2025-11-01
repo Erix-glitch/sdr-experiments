@@ -61,12 +61,18 @@ async function onStartButtonClick() {
     await device.resetBuffer();
     for (let i = 0; i < numSamples; i++) {
       let samples = await device.readSamples(65536);
-      let dB = measurePower(samples, bandwidth);
+      const mode =
+        elements.measurementModeInput &&
+        elements.measurementModeInput.value === "average"
+          ? "average"
+          : "peak";
+      let dB = measurePower(samples, bandwidth, mode);
 
       const threshold = parseFloat(elements.thresholdInput.value);
       const overThreshold = dB >= threshold;
 
-      log(`${samples.frequency} Hz — ${dB} dB`, overThreshold);
+      const modeLabel = mode === "average" ? "avg" : "peak";
+      log(`${samples.frequency} Hz — ${dB} dB (${modeLabel})`, overThreshold);
     }
     // Close the device when done. You can reopen it with provider.get()
     await device.close();
@@ -77,7 +83,7 @@ async function onStartButtonClick() {
   }
 }
 
-function measurePower(samples, bandwidthHz) {
+function measurePower(samples, bandwidthHz, mode = "peak") {
   // Apply a low-pass FIR filter so we only integrate the requested bandwidth.
   let u8Samples = new Uint8Array(samples.data);
   let sampleCount = Math.floor(u8Samples.length / 2);
@@ -85,17 +91,18 @@ function measurePower(samples, bandwidthHz) {
     return -Infinity;
   }
   if (bandwidthHz >= SAMPLE_RATE) {
-    return measureFullBandPower(u8Samples, sampleCount);
+    return measureFullBandPower(u8Samples, sampleCount, mode);
   }
   let filter = getBandwidthFilter(bandwidthHz);
   let tapCount = filter.length;
   if (tapCount === 0) {
-    return measureFullBandPower(u8Samples, sampleCount);
+    return measureFullBandPower(u8Samples, sampleCount, mode);
   }
   let bufferI = new Float64Array(tapCount);
   let bufferQ = new Float64Array(tapCount);
   let bufferIndex = 0;
-  let powerSum = 0;
+  let peakPower = 0;
+  let sumPower = 0;
   for (let n = 0; n < sampleCount; n++) {
     let I = (2 * u8Samples[2 * n]) / 255 - 1;
     let Q = (2 * u8Samples[2 * n + 1]) / 255 - 1;
@@ -110,22 +117,37 @@ function measurePower(samples, bandwidthHz) {
       idx = idx === 0 ? tapCount - 1 : idx - 1;
     }
     bufferIndex = bufferIndex === tapCount - 1 ? 0 : bufferIndex + 1;
-    powerSum += filteredI * filteredI + filteredQ * filteredQ;
+    const power = filteredI * filteredI + filteredQ * filteredQ;
+    sumPower += power;
+    if (power > peakPower) {
+      peakPower = power;
+    }
   }
-  let meanPower = Math.max(powerSum / sampleCount, Number.EPSILON);
-  let dB = 10 * Math.log10(meanPower);
+  const normalizedMode = mode === "average" ? "average" : "peak";
+  const chosenPower =
+    normalizedMode === "average" ? sumPower / sampleCount : peakPower;
+  const powerForDb = Math.max(chosenPower, Number.EPSILON);
+  let dB = 10 * Math.log10(powerForDb);
   return Math.round(dB * 100) / 100;
 }
 
-function measureFullBandPower(u8Samples, sampleCount) {
-  let power = 0;
+function measureFullBandPower(u8Samples, sampleCount, mode = "peak") {
+  let peakPower = 0;
+  let sumPower = 0;
   for (let i = 0; i < sampleCount; i++) {
     let I = (2 * u8Samples[2 * i]) / 255 - 1;
     let Q = (2 * u8Samples[2 * i + 1]) / 255 - 1;
-    power += I * I + Q * Q;
+    const power = I * I + Q * Q;
+    sumPower += power;
+    if (power > peakPower) {
+      peakPower = power;
+    }
   }
-  let meanPower = Math.max(power / sampleCount, Number.EPSILON);
-  let dB = 10 * Math.log10(meanPower);
+  const normalizedMode = mode === "average" ? "average" : "peak";
+  const chosenPower =
+    normalizedMode === "average" ? sumPower / sampleCount : peakPower;
+  const powerForDb = Math.max(chosenPower, Number.EPSILON);
+  let dB = 10 * Math.log10(powerForDb);
   return Math.round(dB * 100) / 100;
 }
 
@@ -245,6 +267,7 @@ function preparePage() {
     "numSamplesInput",
     "logArea",
     "thresholdInput",
+    "measurementModeInput",
     "mainSection"
   ]) {
     elements[id] = document.getElementById(id);

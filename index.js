@@ -4,7 +4,7 @@ var elements = {};
 var provider;
 var device;
 
-const SAMPLE_RATE = 1024000;
+const SAMPLE_RATE = 2400000;
 const filterCache = new Map();
 
 async function main() {

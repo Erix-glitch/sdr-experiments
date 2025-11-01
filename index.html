@@ -42,7 +42,7 @@
             <input
               id="frequencyInput"
               type="number"
-              value="88500000"
+              value="13560000"
               class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
             />
           </div>
@@ -73,7 +73,7 @@
           <div class="space-y-1">
             <label for="thresholdInput" class="text-sm font-medium text-slate-700 dark:text-[#e0e0e0] flex justify-between">
               <span>Threshold</span>
-              <span id="thresholdValue" class="text-slate-500 dark:text-[#a0a0a0]">-30 dB</span>
+              <span id="thresholdValue" class="text-slate-500 dark:text-[#a0a0a0]">-21.5 dB</span>
             </label>
 
             <input
@@ -81,7 +81,7 @@
               type="range"
               min="-60"
               max="0"
-              value="-30"
+              value="-21.5"
               step="0.1"
               class="w-full accent-indigo-600 dark:accent-[#bb86fc]"
               oninput="thresholdValue.textContent = this.value + ' dB'"
@@ -105,7 +105,7 @@
                 min="1"
                 max="1024000"
                 step="1000"
-                value="200000"
+                value="250"
                 class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:w-48 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
               />
               <span class="text-sm text-slate-500 dark:text-[#a0a0a0]">Hz</span>
@@ -120,7 +120,7 @@
               <input
                 id="numSamplesInput"
                 type="number"
-                value="10"
+                value="100"
                 class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:w-48 dark:border-[#333333] dark:bg-[#1e1e1e] dark:text-[#e0e0e0] dark:focus:border-[#bb86fc] dark:focus:ring-[#bb86fc]"
               />
               <span class="text-sm text-slate-500 dark:text-[#a0a0a0]">samples</span>

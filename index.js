@@ -3,6 +3,8 @@ import { RTL2832U_Provider } from "@jtarrio/webrtlsdr/rtlsdr.js";
 var elements = {};
 var provider;
 var device;
+let broadcastChannel = null;
+let isBroadcasting = false;
 
 const SAMPLE_RATE = 2400000;
 const filterCache = new Map();
@@ -13,6 +15,7 @@ async function main() {
   elements.frequencyInput.addEventListener("change", onFrequencyInputChange);
   elements.autoGainBox.addEventListener("change", onAutoGainBoxChange);
   elements.gainInput.addEventListener("change", onGainInputChange);
+  elements.startBroadcastButton.addEventListener("click", onBroadcastStart);
 }
 
 // We ask the user to click "start" so the WebUSB API will let us connect to the device.
@@ -70,6 +73,14 @@ async function onStartButtonClick() {
 
       const threshold = parseFloat(elements.thresholdInput.value);
       const overThreshold = dB >= threshold;
+      if (isBroadcasting && overThreshold && broadcastChannel) {
+        broadcastChannel.postMessage({
+          frequency: samples.frequency,
+          dB,
+          threshold,
+          timestamp: Date.now(),
+        });
+      }
 
       const modeLabel = mode === "average" ? "avg" : "peak";
       log(`${samples.frequency} Hz — ${dB} dB (${modeLabel})`, overThreshold);
@@ -246,6 +257,37 @@ function onGainInputChange() {
   );
 }
 
+function onBroadcastStart() {
+  if (typeof BroadcastChannel !== "function") {
+    log("BroadcastChannel API not supported in this browser.");
+    return;
+  }
+  if (isBroadcasting) {
+    if (broadcastChannel) {
+      broadcastChannel.close();
+      broadcastChannel = null;
+      log("BroadcastChannel closed.");
+    }
+    isBroadcasting = false;
+    updateBroadcastButton(false);
+    return;
+  }
+
+  broadcastChannel = new BroadcastChannel("sdr-data");
+  isBroadcasting = true;
+  updateBroadcastButton(true);
+  log("BroadcastChannel opened.");
+}
+
+function updateBroadcastButton(active) {
+  const button = elements.startBroadcastButton;
+  if (!button) {
+    return;
+  }
+  button.textContent = active ? "Stop" : "Start";
+  button.setAttribute("aria-pressed", active ? "true" : "false");
+}
+
 function setNumberInput(element, getter, setter) {
   let v = Number(element.value);
   if (isNaN(v)) {
@@ -268,7 +310,8 @@ function preparePage() {
     "logArea",
     "thresholdInput",
     "measurementModeInput",
-    "mainSection"
+    "mainSection",
+    "startBroadcastButton",
   ]) {
     elements[id] = document.getElementById(id);
   }
@@ -281,6 +324,8 @@ function preparePage() {
     mainSection.classList.add("hidden")
     document.getElementById("usbWarning").style.display = "block";
   }
+
+  updateBroadcastButton(false);
 }
 
 window.addEventListener("load", main);

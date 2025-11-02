@@ -9,3 +9,9 @@
     color-scheme: dark;
   }
 }
+
+@layer components {
+  .broadcast-toggle[aria-pressed="true"] {
+    @apply bg-rose-600 hover:bg-rose-500 focus:ring-rose-200 dark:bg-[#cf6679] dark:hover:bg-[#b35566] dark:focus:ring-[#cf6679]/40;
+  }
+}
